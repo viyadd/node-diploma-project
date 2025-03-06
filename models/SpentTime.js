@@ -3,28 +3,25 @@ const mongoose = require('mongoose');
 const SpentTimeSchema = mongoose.Schema(
 	{
 		startedAt: {
-			type: String,
+			type: Date,
 			required: true,
 		},
 		endedAt: {
-			type: String,
+			type: Date,
 			required: true,
 		},
 		comment: {
 			type: String,
 			required: true,
 		},
-		task: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'Task',
-		},
 		executor: {
 			type: mongoose.Schema.Types.ObjectId,
-			ref: 'User',
+			ref: 'user',
 		},
 	},
+	{ timestamps: true },
 );
 
-const SpentTime = mongoose.model('SpentTime', SpentTimeSchema);
+const SpentTime = mongoose.model('spent_time', SpentTimeSchema);
 
 module.exports = SpentTime;
