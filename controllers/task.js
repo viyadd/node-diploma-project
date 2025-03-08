@@ -1,4 +1,51 @@
+const mongoose = require('mongoose');
+const { getOrderByParam } = require('../helpers');
 const { Project, Task } = require('../models');
+
+async function getTasks({
+	search = '',
+	idList,
+	limit = 10,
+	page = 1,
+	sort = 'createdAt',
+	orderBy = 'asc',
+}) {
+	const orderByParam = getOrderByParam(orderBy);
+
+	const idListObj = Array.isArray(idList) ? idList : [idList];
+
+	const searchObj = idList
+		? {
+				_id: {
+					$in: idListObj,
+				},
+		  }
+		: { title: { $regex: search, $options: 'i' } };
+
+	const obj = Task.schema.obj;
+	const [tasks, count] = await Promise.all([
+		Task.find(searchObj)
+			.limit(limit)
+			.skip((page - 1) * limit)
+			.sort({ [Object.keys(obj).includes(sort) ? sort : 'createdAt']: orderByParam }),
+		Task.countDocuments(searchObj),
+	]);
+
+	await Promise.all(
+		tasks.map((task) =>
+			task.populate([
+				'state',
+				'owner',
+				'executor',
+			]),
+		),
+	);
+
+	return {
+		tasks,
+		lastPage: Math.ceil(count / limit),
+	};
+}
 
 async function getTask(id) {
 	const newTask = await Task.findOne({ _id: id });
@@ -38,6 +85,7 @@ function updateTask(id, taskData) {
 
 module.exports = {
 	getTask,
+	getTasks,
 	addTask,
 	updateTask,
 };

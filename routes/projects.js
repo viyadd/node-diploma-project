@@ -8,6 +8,7 @@ const {
 	getProject,
 	getProjects,
 	addProject,
+	updateProject,
 } = require('../controllers/project');
 const { addTask } = require('../controllers/task');
 

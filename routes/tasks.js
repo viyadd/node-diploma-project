@@ -4,7 +4,7 @@ const hasRole = require('../middlewares/hasRole');
 const authenticated = require('../middlewares/authenticated');
 const ROLES = require('../constants/roles');
 const { errorParser, sendErrorResponse, mapTask, mapSpentTime } = require('../helpers');
-const { getTask, updateTask } = require('../controllers/task');
+const { getTask, updateTask, getTasks } = require('../controllers/task');
 const { addSpentTime } = require('../controllers/spentTime');
 
 const router = express.Router({ mergeParams: true });
@@ -24,6 +24,19 @@ router.get(
 		}
 	},
 );
+
+router.get('/', authenticated, hasRole([ROLES.ADMIN, ROLES.USER]), async (req, res) => {
+	try {
+		const { id, search, limit, page, sort, orderBy } = req.query;
+		const data = { idList: id, search, limit, page, sort, orderBy };
+		const { tasks, lastPage } = await getTasks(data);
+
+		res.send({ data: { lastPage, content: tasks.map(mapTask) } });
+	} catch (e) {
+		const { error, statusCode } = errorParser(e);
+		sendErrorResponse(res, error, statusCode);
+	}
+});
 
 router.post(
 	'/:id/spent-time',

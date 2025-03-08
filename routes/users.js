@@ -25,7 +25,6 @@ router.get('/user', async (req, res) => {
 	try {
 		const { token } = req.cookies;
 		if (typeof token !== 'string' || token.trim().length === 0) {
-			console.log('>', req.cookies.token);
 			sendErrorResponse(res, 'Unknown user', 401);
 			return;
 		}

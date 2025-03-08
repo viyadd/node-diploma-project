@@ -8,10 +8,10 @@ async function getProjects() {
 				'state',
 				'owner',
 				'executor',
-				{
-					path: 'tasks',
-					populate: 'spentTimes',
-				},
+				// {
+				// 	path: 'tasks',
+				// 	populate: 'spentTimes',
+				// },
 			]),
 		),
 	);
@@ -24,10 +24,10 @@ async function getProject(id) {
 		'state',
 		'owner',
 		'executor',
-		{
-			path: 'tasks',
-			populate: 'spentTimes',
-		},
+		// {
+		// 	path: 'tasks',
+		// 	populate: 'spentTimes',
+		// },
 	]);
 
 	return project;
@@ -37,7 +37,7 @@ async function addProject(project) {
 	const newProject = await Project.create(project);
 
 	await newProject.populate({
-		path: ['state', 'tasks', 'owner', 'executor'],
+		path: ['state', /* 'tasks',  */'owner', 'executor'],
 	});
 
 	return newProject;

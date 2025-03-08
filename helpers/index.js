@@ -1,4 +1,5 @@
 const errorParser = require('./errorParser.js');
+const getOrderByParam = require('./getOrderByParam.js');
 const mapProject = require('./mapProject');
 const mapSpentTime = require('./mapSpentTime.js');
 const mapState = require('./mapState');
@@ -10,6 +11,7 @@ const token = require('./token');
 
 module.exports = {
 	errorParser,
+	getOrderByParam,
 	mapProject,
 	mapSpentTime,
 	mapState,
