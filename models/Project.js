@@ -18,6 +18,7 @@ const ProjectSchema = mongoose.Schema(
 		state: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'state',
+			required: true,
 		},
 		owner: {
 			type: mongoose.Schema.Types.ObjectId,
