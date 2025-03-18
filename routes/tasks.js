@@ -2,17 +2,17 @@ const express = require('express');
 
 const hasRole = require('../middlewares/hasRole');
 const authenticated = require('../middlewares/authenticated');
-const ROLES = require('../constants/roles');
 const { errorParser, sendErrorResponse, mapTask, mapSpentTime } = require('../helpers');
 const { getTask, updateTask, getTasks } = require('../controllers/task');
 const { addSpentTime } = require('../controllers/spentTime');
+const ALL_REGISTRED = require('../constants/all-registred');
 
 const router = express.Router({ mergeParams: true });
 
 router.get(
 	'/:id',
 	authenticated,
-	hasRole([ROLES.ADMIN, ROLES.USER]),
+	hasRole(ALL_REGISTRED),
 	async (req, res) => {
 		try {
 			const task = await getTask(req.params.id);
@@ -25,7 +25,7 @@ router.get(
 	},
 );
 
-router.get('/', authenticated, hasRole([ROLES.ADMIN, ROLES.USER]), async (req, res) => {
+router.get('/', authenticated, hasRole(ALL_REGISTRED), async (req, res) => {
 	try {
 		const { id, search, limit, page, sort, orderBy } = req.query;
 		const data = { idList: id, search, limit, page, sort, orderBy };
@@ -41,12 +41,12 @@ router.get('/', authenticated, hasRole([ROLES.ADMIN, ROLES.USER]), async (req, r
 router.post(
 	'/:id/spent-time',
 	authenticated,
-	hasRole([ROLES.ADMIN, ROLES.USER]),
+	hasRole(ALL_REGISTRED),
 	async (req, res) => {
 		try {
 			const newSpentTime = await addSpentTime(req.params.id, {
 				startedAt: req.body.startedAt,
-				endedAt: req.body.endedAt,
+				duration: req.body.duration,
 				comment: req.body.comment,
 				executor: req.user.id,
 			});
@@ -59,15 +59,28 @@ router.post(
 	},
 );
 
-router.patch('/:id', authenticated, hasRole([ROLES.ADMIN]), async (req, res) => {
+router.patch('/:id', authenticated, hasRole(ALL_REGISTRED), async (req, res) => {
 	try {
 		const newTask = await updateTask(req.params.id, {
 			codeName: req.body.codeName,
 			title: req.body.title,
 			description: req.body.description,
 			owner: req.body.owner,
-			executor: req.body.executor,
+			// executor: req.body.executor,
 			state: req.body.state,
+		});
+
+		res.send({ data: mapTask(newTask) });
+	} catch (e) {
+		const { error, statusCode } = errorParser(e);
+		sendErrorResponse(res, error, statusCode);
+	}
+});
+
+router.patch('/:id/executor', authenticated, hasRole(ALL_REGISTRED), async (req, res) => {
+	try {
+		const newTask = await updateTask(req.params.id, {
+			executor: req.user.id,
 		});
 
 		res.send({ data: mapTask(newTask) });

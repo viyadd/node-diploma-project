@@ -15,9 +15,11 @@ const { addTask } = require('../controllers/task');
 const router = express.Router({ mergeParams: true });
 
 router.get('/', authenticated, hasRole([ROLES.ADMIN, ROLES.USER]), async (req, res) => {
-	const projects = await getProjects();
+	const { projection } = req.query;
 
-	res.send({ data: projects.map(mapProject) });
+	const projects = await getProjects({ projection });
+
+	res.send({ data: projects.map((project) => mapProject(project, projection)) });
 });
 
 router.get(
@@ -59,7 +61,7 @@ router.post('/', authenticated, hasRole([ROLES.ADMIN]), async (req, res) => {
 			title: req.body.title,
 			description: req.body.description,
 			state: req.body.state,
-			owner: req.user.id
+			owner: req.user.id,
 		});
 
 		res.send({ error: null, project: mapProject(newProject) });

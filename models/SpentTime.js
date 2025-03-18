@@ -6,8 +6,8 @@ const SpentTimeSchema = mongoose.Schema(
 			type: Date,
 			required: true,
 		},
-		endedAt: {
-			type: Date,
+		duration: {
+			type: Number,
 			required: true,
 		},
 		comment: {

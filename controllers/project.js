@@ -1,8 +1,10 @@
 const Project = require('../models/Project');
+const {PROJECT_PROJECTION} = require('../constants');
 
-async function getProjects() {
+async function getProjects({ projection }) {
 	const projects = await Project.find();
-	return await Promise.all(
+	if (projection!==PROJECT_PROJECTION.SHORT_LIST)
+	await Promise.all(
 		projects.map((project) =>
 			project.populate([
 				'state',
@@ -15,6 +17,7 @@ async function getProjects() {
 			]),
 		),
 	);
+	return projects;
 }
 
 async function getProject(id) {
@@ -37,7 +40,7 @@ async function addProject(project) {
 	const newProject = await Project.create(project);
 
 	await newProject.populate({
-		path: ['state', /* 'tasks',  */'owner', 'executor'],
+		path: ['state', /* 'tasks',  */ 'owner', 'executor'],
 	});
 
 	return newProject;

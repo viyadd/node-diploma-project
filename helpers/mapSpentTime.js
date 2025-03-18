@@ -6,7 +6,7 @@ module.exports = function (spentTime) {
 		comment: spentTime.comment,
 		executor: parsingUser(spentTime.executor),
 		startedAt: spentTime.startedAt,
-		endedAt: spentTime.endedAt,
+		duration: spentTime.duration,
 		createdAt: spentTime.createdAt,
 	};
 };

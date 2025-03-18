@@ -25,12 +25,14 @@ router.get('/user', async (req, res) => {
 	try {
 		const { token } = req.cookies;
 		if (typeof token !== 'string' || token.trim().length === 0) {
-			sendErrorResponse(res, 'Unknown user', 401);
+			// sendErrorResponse(res, 'Unknown user', 401);
+			res.send({ data: null });
 			return;
 		}
 		const tokenData = verify(req.cookies.token);
 		if (tokenData.id === undefined) {
-			sendErrorResponse(res, 'Unknown user', 401);
+			// sendErrorResponse(res, 'Unknown user', 401);
+			res.send({ data: null });
 			return;
 		}
 		const user = await getUser(tokenData.id);
