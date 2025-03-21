@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
 const { getOrderByParam, getExtendedError } = require('../helpers');
 const { Project, Task } = require('../models');
+// const { TASK_PROJECTION } = require('../constants');
 
 async function getTasks({
+	populateList = ['state', 'owner', 'executor'],
 	search = '',
 	idList,
 	limit = 10,
@@ -31,7 +33,9 @@ async function getTasks({
 		Task.countDocuments(searchObj),
 	]);
 
-	await Promise.all(tasks.map((task) => task.populate(['state', 'owner', 'executor'])));
+	if (Array.isArray(populateList)) {
+		await Promise.all(tasks.map((task) => task.populate(populateList)));
+	}
 
 	return {
 		tasks,

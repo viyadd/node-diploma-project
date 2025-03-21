@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const ProjectSchema = mongoose.Schema(
 	{
-		title: {
+		title: { // Акроним(acronym) проекта
 			type: String,
 			required: true,
 			unique: true,

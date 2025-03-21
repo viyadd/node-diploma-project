@@ -28,6 +28,9 @@ const TaskSchema = mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'state',
 		},
+		expectedSpentTime: {
+			type: Number,
+		},
 		spentTimes: [{
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'spent_time',

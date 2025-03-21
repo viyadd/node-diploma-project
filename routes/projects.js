@@ -44,6 +44,7 @@ router.post('/:id/tasks', authenticated, hasRole([ROLES.ADMIN]), async (req, res
 			codeName: req.body.codeName,
 			title: req.body.title,
 			description: req.body.description,
+			expectedSpentTime: req.body.expectedSpentTime,
 			owner: req.user.id,
 			state: req.body.state,
 		});

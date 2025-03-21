@@ -19,7 +19,7 @@ async function getSpentTimeList({
 					$in: idListObj,
 				},
 		  }
-		: { title: { $regex: search, $options: 'i' } };
+		: { title: { $regex: search ?? '', $options: 'i' } };
 
 	const obj = SpentTime.schema.obj;
 	const [spentTimeList, count] = await Promise.all([
@@ -27,21 +27,35 @@ async function getSpentTimeList({
 			.limit(limit)
 			.skip((page - 1) * limit)
 			.sort({ [Object.keys(obj).includes(sort) ? sort : 'createdAt']: orderByParam }),
-			SpentTime.countDocuments(searchObj),
+		SpentTime.countDocuments(searchObj),
 	]);
 
-	await Promise.all(
-		spentTimeList.map((spentTime) =>
-			spentTime.populate([
-				'executor',
-			]),
-		),
-	);
+	await Promise.all(spentTimeList.map((spentTime) => spentTime.populate(['executor'])));
 
 	return {
 		spentTimeList,
 		lastPage: Math.ceil(count / limit),
 	};
+}
+
+async function getSpentTimeByIdList({ idList, sort = 'createdAt', orderBy = 'asc' }) {
+	const orderByParam = getOrderByParam(orderBy);
+
+	const idListObj = Array.isArray(idList) ? idList : [idList];
+
+	const searchObj = {
+		_id: {
+			$in: idListObj,
+		},
+	};
+	console.log(searchObj)
+
+	const obj = SpentTime.schema.obj;
+	const spentTimeList = await SpentTime.find(searchObj).sort({
+		[Object.keys(obj).includes(sort) ? sort : 'createdAt']: orderByParam,
+	});
+
+	return spentTimeList;
 }
 
 async function addSpentTime(taskId, spentTimeData) {
@@ -61,7 +75,9 @@ async function addSpentTime(taskId, spentTimeData) {
 }
 
 async function updateSpentTime(id, spentTimeData) {
-	const newSpentTime = await SpentTime.findByIdAndUpdate(id, spentTimeData, { returnDocument: 'after' });
+	const newSpentTime = await SpentTime.findByIdAndUpdate(id, spentTimeData, {
+		returnDocument: 'after',
+	});
 	if (newSpentTime === null) {
 		throw getExtendedError(`SpemtTime ${id} not found`);
 	}
@@ -72,6 +88,7 @@ async function updateSpentTime(id, spentTimeData) {
 }
 
 module.exports = {
+	getSpentTimeByIdList,
 	getSpentTimeList,
 	addSpentTime,
 	updateSpentTime,

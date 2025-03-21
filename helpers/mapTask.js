@@ -9,6 +9,7 @@ module.exports = function (task) {
 		codeName: task.codeName,
 		title: task.title,
 		description: task.description,
+		expectedSpentTime: task.expectedSpentTime,
 		project: task.project,
 		owner: parsingUser(task.owner),
 		executor: parsingUser(task.executor),

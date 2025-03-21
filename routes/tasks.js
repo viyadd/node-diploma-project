@@ -28,7 +28,7 @@ router.get(
 router.get('/', authenticated, hasRole(ALL_REGISTRED), async (req, res) => {
 	try {
 		const { id, search, limit, page, sort, orderBy } = req.query;
-		const data = { idList: id, search, limit, page, sort, orderBy };
+		const data = { idList: id, search, limit, page, sort, orderBy,  };
 		const { tasks, lastPage } = await getTasks(data);
 
 		res.send({ data: { lastPage, content: tasks.map(mapTask) } });

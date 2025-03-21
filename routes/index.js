@@ -8,5 +8,6 @@ router.use('/states', require('./states'))
 router.use('/projects', require('./projects'))
 router.use('/tasks', require('./tasks'))
 router.use('/spent-times', require('./spentTimes'))
+router.use('/analytics', require('./analytics'))
 
 module.exports = router;
