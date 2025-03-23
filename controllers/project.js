@@ -1,6 +1,7 @@
 const Project = require('../models/Project');
 const { PROJECT_PROJECTION } = require('../constants');
 const { getOrderByParam } = require('../helpers');
+const { Task } = require('../models');
 
 async function getProjects({ projection }) {
 	const projects = await Project.find();
@@ -48,7 +49,10 @@ async function getFilteredProjects({
 			projects.map((project) => project.populate(['state', 'owner', 'executor'])),
 		);
 	}
-	return { projects, count };
+	return {
+		projects,
+		lastPage: Math.ceil(count / limit),
+	};
 }
 
 async function getProject(id, { projection } = {}) {

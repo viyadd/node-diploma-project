@@ -8,6 +8,7 @@ const {
 	mapState,
 	mapTask,
 	mapProject,
+	sendDataResponse,
 } = require('../helpers');
 const { getSpentTimeByIdList } = require('../controllers/spentTime');
 const ALL_REGISTRED = require('../constants/all-registred');
@@ -49,14 +50,15 @@ router.get('/project/:id', authenticated, hasRole(ALL_REGISTRED), async (req, re
 			stateList[i].count = count;
 		});
 
-		res.send({
-			data: {
-				// lastPage,
-				// массив статусов и количество задач в статусе
-				// массив задач и количество времени затраченное на выполнение
-				content: { taskList, stateList },
-			},
-		});
+		sendDataResponse(res, {content: { taskList, stateList }});
+		// res.send({
+		// 	data: {
+		// 		// lastPage,
+		// 		// массив статусов и количество задач в статусе
+		// 		// массив задач и количество времени затраченное на выполнение
+		// 		content: { taskList, stateList },
+		// 	},
+		// });
 	} catch (e) {
 		const { error, statusCode } = errorParser(e);
 		sendErrorResponse(res, error, statusCode);
@@ -69,8 +71,6 @@ router.get('/projects', authenticated, hasRole(ALL_REGISTRED), async (req, res) 
 			projection: PROJECT_PROJECTION.SHORT_LIST,
 		});
 
-		// const projectsList = projects.map(mapProject);
-
 		const states = await getStates();
 
 		const stateList = states.map(mapState);
@@ -81,13 +81,7 @@ router.get('/projects', authenticated, hasRole(ALL_REGISTRED), async (req, res) 
 			stateList[i].count = count;
 		});
 
-		res.send({
-			data: {
-				// lastPage,
-				// массив статусов и количество проектов в статусе
-				content: stateList,
-			},
-		});
+		sendDataResponse(res, stateList);
 	} catch (e) {
 		const { error, statusCode } = errorParser(e);
 		sendErrorResponse(res, error, statusCode);

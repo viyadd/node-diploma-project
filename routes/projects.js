@@ -3,23 +3,48 @@ const express = require('express');
 const hasRole = require('../middlewares/hasRole');
 const authenticated = require('../middlewares/authenticated');
 const ROLES = require('../constants/roles');
-const { errorParser, sendErrorResponse, mapProject, mapTask } = require('../helpers');
+const {
+	errorParser,
+	sendErrorResponse,
+	mapProject,
+	mapTask,
+	sendDataResponse,
+} = require('../helpers');
 const {
 	getProject,
 	getProjects,
 	addProject,
 	updateProject,
+	getFilteredProjects,
 } = require('../controllers/project');
 const { addTask } = require('../controllers/task');
 
 const router = express.Router({ mergeParams: true });
 
 router.get('/', authenticated, hasRole([ROLES.ADMIN, ROLES.USER]), async (req, res) => {
-	const { projection } = req.query;
+	const { projection, id, search, limit, page, sort, orderBy } = req.query;
+	const isFiltered = [id, search, limit, page, sort, orderBy].filter(Boolean).length > 0;
+	const projectsData = isFiltered
+		? await getFilteredProjects({
+				projection,
+				idList: id,
+				search,
+				limit,
+				page,
+				sort,
+				orderBy,
+		  })
+		: await getProjects({ projection });
 
-	const projects = await getProjects({ projection });
-
-	res.send({ data: projects.map((project) => mapProject(project, projection)) });
+	if (isFiltered) {
+		const { projects, lastPage } = projectsData;
+		sendDataResponse(res, { lastPage, content: projects.map(mapProject) });
+	} else {
+		sendDataResponse(
+			res,
+			projectsData.map((project) => mapProject(project, projection)),
+		);
+	}
 });
 
 router.get(
@@ -30,7 +55,7 @@ router.get(
 		try {
 			const project = await getProject(req.params.id);
 
-			res.send({ data: mapProject(project) });
+			sendDataResponse(res, mapProject(project));
 		} catch (e) {
 			const { error, statusCode } = errorParser(e);
 			sendErrorResponse(res, error, statusCode);
@@ -49,7 +74,7 @@ router.post('/:id/tasks', authenticated, hasRole([ROLES.ADMIN]), async (req, res
 			state: req.body.state,
 		});
 
-		res.send({ data: mapTask(newTask) });
+		sendDataResponse(res, mapTask(newTask));
 	} catch (e) {
 		const { error, statusCode } = errorParser(e);
 		sendErrorResponse(res, error, statusCode);
@@ -65,6 +90,7 @@ router.post('/', authenticated, hasRole([ROLES.ADMIN]), async (req, res) => {
 			owner: req.user.id,
 		});
 
+		// sendDataResponse(res, mapProject(newProject))
 		res.send({ error: null, project: mapProject(newProject) });
 	} catch (e) {
 		const { error, statusCode } = errorParser(e);
@@ -80,7 +106,7 @@ router.patch('/:id', authenticated, hasRole([ROLES.ADMIN]), async (req, res) => 
 			state: req.body.state,
 		});
 
-		res.send({ data: mapProject(newProject) });
+		sendDataResponse(res, mapProject(newProject));
 	} catch (e) {
 		const { error, statusCode } = errorParser(e);
 		sendErrorResponse(res, error, statusCode);

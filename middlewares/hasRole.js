@@ -1,8 +1,9 @@
+const { sendErrorResponse } = require('../helpers');
+
 module.exports = function (roles) {
 	return (req, res, next) => {
 		if (!roles.includes(req.user.role)) {
-			res.send({ error: 'Access denied' });
-
+			sendErrorResponse(res, 'Access denied', 200);
 			return;
 		}
 
