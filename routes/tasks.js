@@ -65,6 +65,7 @@ router.patch('/:id', authenticated, hasRole(ALL_REGISTRED), async (req, res) => 
 			codeName: req.body.codeName,
 			title: req.body.title,
 			description: req.body.description,
+			expectedSpentTime: req.body.expectedSpentTime,
 			owner: req.body.owner,
 			// executor: req.body.executor,
 			state: req.body.state,

@@ -17,7 +17,7 @@ const {
 	updateProject,
 	getFilteredProjects,
 } = require('../controllers/project');
-const { addTask } = require('../controllers/task');
+const { addTask, getTasks } = require('../controllers/task');
 
 const router = express.Router({ mergeParams: true });
 
@@ -56,6 +56,33 @@ router.get(
 			const project = await getProject(req.params.id);
 
 			sendDataResponse(res, mapProject(project));
+		} catch (e) {
+			const { error, statusCode } = errorParser(e);
+			sendErrorResponse(res, error, statusCode);
+		}
+	},
+);
+
+router.get(
+	'/:id/tasks',
+	authenticated,
+	hasRole([ROLES.ADMIN, ROLES.USER]),
+	async (req, res) => {
+		try {
+			const project = await getProject(req.params.id);
+			const { search, limit, page, sort, orderBy } = req.query;
+			const taskIdList = project.tasks;
+			const tasksData = await getTasks({
+				idList: taskIdList,
+				search,
+				limit,
+				page,
+				sort,
+				orderBy,
+			});
+
+			const { tasks, lastPage } = tasksData;
+			sendDataResponse(res, { lastPage, content: tasks.map(mapTask) });
 		} catch (e) {
 			const { error, statusCode } = errorParser(e);
 			sendErrorResponse(res, error, statusCode);

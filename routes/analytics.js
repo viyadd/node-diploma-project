@@ -33,7 +33,6 @@ router.get('/project/:id', authenticated, hasRole(ALL_REGISTRED), async (req, re
 
 		const taskList = tasks.map(mapTask);
 
-		console.log(taskList);
 		taskList.forEach((task, i) => {
 			const duration = task.spentTimes.reduce(
 				(sum, spentTime) => sum + spentTime.duration,
@@ -44,21 +43,13 @@ router.get('/project/:id', authenticated, hasRole(ALL_REGISTRED), async (req, re
 
 		const states = await getStates();
 
-		const stateList = states.map(mapState);
-		stateList.forEach((status, i) => {
+		const statusList = states.map(mapState);
+		statusList.forEach((status, i) => {
 			const count = tasks.filter((task) => String(task.state._id) === status.id).length;
-			stateList[i].count = count;
+			statusList[i].count = count;
 		});
 
-		sendDataResponse(res, {content: { taskList, stateList }});
-		// res.send({
-		// 	data: {
-		// 		// lastPage,
-		// 		// массив статусов и количество задач в статусе
-		// 		// массив задач и количество времени затраченное на выполнение
-		// 		content: { taskList, stateList },
-		// 	},
-		// });
+		sendDataResponse(res, { taskList, statusList });
 	} catch (e) {
 		const { error, statusCode } = errorParser(e);
 		sendErrorResponse(res, error, statusCode);
