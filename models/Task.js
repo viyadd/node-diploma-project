@@ -15,26 +15,30 @@ const TaskSchema = mongoose.Schema(
 			type: String,
 			required: true,
 		},
-		projec: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'Project',
-		},
 		owner: {
 			type: mongoose.Schema.Types.ObjectId,
-			ref: 'User',
+			ref: 'user',
+			required: true,
 		},
 		executor: {
 			type: mongoose.Schema.Types.ObjectId,
-			ref: 'User',
+			ref: 'user',
 		},
 		state: {
 			type: mongoose.Schema.Types.ObjectId,
-			ref: 'State',
+			ref: 'state',
 		},
+		expectedSpentTime: {
+			type: Number,
+		},
+		spentTimes: [{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'spent_time',
+		}],
 	},
 	{ timestamps: true },
 );
 
-const Task = mongoose.model('Task', TaskSchema);
+const Task = mongoose.model('task', TaskSchema);
 
 module.exports = Task;

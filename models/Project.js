@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const ProjectSchema = mongoose.Schema(
 	{
-		title: {
+		title: { // Акроним(acronym) проекта
 			type: String,
 			required: true,
 			unique: true,
@@ -11,16 +11,28 @@ const ProjectSchema = mongoose.Schema(
 			type: String,
 			required: true,
 		},
-		state: [
-			{
-				type: mongoose.Schema.Types.ObjectId,
-				ref: 'State',
-			},
-		],
+		tasks: [{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'task',
+		}],
+		state: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'state',
+			required: true,
+		},
+		owner: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'user',
+			required: true,
+		},
+		executor: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'user',
+		},
 	},
 	{ timestamps: true },
 );
 
-const Project = mongoose.model('Project', ProjectSchema);
+const Project = mongoose.model('project', ProjectSchema);
 
 module.exports = Project;

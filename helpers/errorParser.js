@@ -1,11 +1,16 @@
 module.exports = function (error) {
 	const { code, errmsg } = error?.errorResponse ?? {};
-	const { _message } = error;
+	const { _message, status } = error;
+
+	if (status === 406) {
+		return { statusCode: status, error: error.message };
+	}
 
 	const statusCode = _message || code === 11000 ? 400 : 500;
 	// if (statusCode === 400) {
-	// 	console.log('>', { errmsg, _message, error });
 	// }
+	const { message } = error;
+	console.log('>>', { errmsg, _message, message, error });
 	return {
 		statusCode,
 		error: _message || (errmsg && { code, message: errmsg }) || 'Unknown error',

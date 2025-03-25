@@ -25,13 +25,14 @@ router.get('/user', async (req, res) => {
 	try {
 		const { token } = req.cookies;
 		if (typeof token !== 'string' || token.trim().length === 0) {
-			console.log('>', req.cookies.token);
-			sendErrorResponse(res, 'Unknown user', 401);
+			// sendErrorResponse(res, 'Unknown user', 401);
+			res.send({ data: null });
 			return;
 		}
 		const tokenData = verify(req.cookies.token);
 		if (tokenData.id === undefined) {
-			sendErrorResponse(res, 'Unknown user', 401);
+			// sendErrorResponse(res, 'Unknown user', 401);
+			res.send({ data: null });
 			return;
 		}
 		const user = await getUser(tokenData.id);
@@ -51,6 +52,9 @@ router.get('/roles', authenticated, hasRole([ROLES.ADMIN]), async (req, res) => 
 
 router.patch('/:id', authenticated, hasRole([ROLES.ADMIN]), async (req, res) => {
 	const newUser = await updateUser(req.params.id, {
+		name: req.body.name,
+		patronymic: req.body.patronymic,
+		surname: req.body.surname,
 		role: req.body.roleId,
 	});
 

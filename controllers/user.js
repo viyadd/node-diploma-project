@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const User = require('../models/User');
 const { generate } = require('../helpers/token');
 const ROLES = require('../constants/roles');
+const { getExtendedError } = require('../helpers');
 
 // register
 
@@ -44,19 +45,30 @@ async function login(login, password) {
 	return { token, user };
 }
 
-function getUsers() {
-	return User.find();
+async function getUsers() {
+	const users = await User.find();
+
+	// users.map((user) => {
+	// 	// const sysRole = getRoles().find((role) => role.id === user.role) ?? null;
+	// 	// user.sysRole = sysRole;
+	// 	return user;
+	// });
+	return users
 }
 
 function getUser(id) {
-	return User.findOne({ _id: id });
+	const user = User.findOne({ _id: id });
+	if (user === null) {
+		throw getExtendedError(`User ${id} not found`);
+	}
+	return user;
 }
 
 function getRoles() {
 	return [
-		{ id: ROLES.ADMIN, name: 'Admin' },
-		{ id: ROLES.USER, name: 'User' },
-		{ id: ROLES.GUEST, name: 'Guest' },
+		{ id: ROLES.ADMIN, code: '01', text: 'Admin' },
+		{ id: ROLES.USER, code: '02', text: 'User' },
+		{ id: ROLES.GUEST, code: '03', text: 'Guest' },
 	];
 }
 
@@ -66,7 +78,7 @@ function deleteUser(id) {
 	return User.deleteOne({ _id: id });
 }
 
-// edit (roles)
+// edit
 
 function updateUser(id, userData) {
 	return User.findByIdAndUpdate(id, userData, { returnDocument: 'after' });
