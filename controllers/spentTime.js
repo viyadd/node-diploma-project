@@ -87,9 +87,14 @@ async function updateSpentTime(id, spentTimeData) {
 	return newSpentTime;
 }
 
+function deleteSpentTime(id) {
+	return SpentTime.deleteOne({ _id: id });
+}
+
 module.exports = {
 	getSpentTimeByIdList,
 	getSpentTimeList,
 	addSpentTime,
 	updateSpentTime,
+	deleteSpentTime,
 };
