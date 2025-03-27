@@ -90,7 +90,7 @@ router.get(
 	},
 );
 
-router.post('/:id/tasks', authenticated, hasRole([ROLES.ADMIN]), async (req, res) => {
+router.post('/:id/tasks', authenticated, hasRole([ROLES.ADMIN, ROLES.USER]), async (req, res) => {
 	try {
 		const newTask = await addTask(req.params.id, {
 			codeName: req.body.codeName,
