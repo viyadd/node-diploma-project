@@ -31,13 +31,17 @@ async function login(login, password) {
 	const user = await User.findOne({ login });
 
 	if (!user) {
-		throw new Error('User not found');
+		throw new getExtendedError('User not found');
+	}
+
+	if(!user.isActive) {
+		throw new getExtendedError('Access denied');
 	}
 
 	const isPasswordMatch = await bcrypt.compare(password, user.password);
 
 	if (!isPasswordMatch) {
-		throw new Error('Wrong password');
+		throw new getExtendedError('Wrong password');
 	}
 
 	const token = generate({ id: user.id });

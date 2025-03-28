@@ -9,6 +9,7 @@ const mapUser = require('./mapUser');
 const parsingUser = require('./parsingUser.js');
 const sendDataResponse = require('./sendDataResponse.js');
 const sendErrorResponse = require('./sendErrorResponse.js');
+const testLogin = require('./test-login.js');
 const token = require('./token');
 
 module.exports = {
@@ -23,5 +24,6 @@ module.exports = {
 	parsingUser,
 	sendDataResponse,
 	sendErrorResponse,
+	testLogin,
 	token,
 };

@@ -9,6 +9,7 @@ module.exports = function (project, projection) {
 		return {
 			id: project.id,
 			title: project.title,
+			description: project.description,
 			tasks: project.tasks,
 		};
 	}

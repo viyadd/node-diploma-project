@@ -1,13 +1,19 @@
 const express = require('express');
 const { register, login } = require('../controllers/user');
 const mapUser = require('../helpers/mapUser');
+const { testLogin } = require('../helpers');
 
 const router = express.Router({ mergeParams: true });
 
 router.post('/register', async (req, res) => {
 	try {
+		const loginTested = testLogin(req.body.login);
+		if (loginTested.isNotValid) {
+			throw new Error('Login is not valid');
+		}
+
 		const { user, token } = await register({
-			login: req.body.login,
+			login: loginTested.login,
 			password: req.body.password,
 			name: req.body.name,
 			surname: req.body.surname,
@@ -24,7 +30,7 @@ router.post('/register', async (req, res) => {
 
 router.post('/login', async (req, res) => {
 	try {
-		const { user, token } = await login(req.body.login, req.body.password);
+		const { user, token } = await login(testLogin(req.body.login).login, req.body.password);
 
 		res
 			.cookie('token', token, { httpOnly: true })
