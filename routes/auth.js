@@ -13,7 +13,7 @@ router.post('/register', async (req, res) => {
 		}
 
 		const { user, token } = await register({
-			login: isNotValid.login,
+			login: loginTested.login,
 			password: req.body.password,
 			name: req.body.name,
 			surname: req.body.surname,

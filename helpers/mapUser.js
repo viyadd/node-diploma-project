@@ -6,6 +6,7 @@ module.exports = function (user) {
 		name: user.name,
 		patronymic: user.patronymic,
 		roleId: user.role,
+		isActive: user.isActive,
 		registredAt: user.createdAt,
 	};
 };

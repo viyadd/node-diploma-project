@@ -66,5 +66,12 @@ router.delete('/:id', authenticated, hasRole([ROLES.ADMIN]), async (req, res) =>
 
 	res.send({ error: null });
 });
+router.patch('/:id/ban', authenticated, hasRole([ROLES.ADMIN]), async (req, res) => {
+	const newUser = await updateUser(req.params.id, {
+		isActive: req.body.isActive,
+	});
+
+	res.send({ data: mapUser(newUser) });
+});
 
 module.exports = router;
